@@ -6,9 +6,11 @@ import java.util.Scanner;
 public class UI {
     private DealerShip dealership;
     private Scanner scanner;
+    private ContractFileManager contractDataManager;
 
     public UI() {
         scanner = new Scanner(System.in);
+        contractDataManager = new ContractFileManager();
         inUI();
     }
 
@@ -21,7 +23,6 @@ public class UI {
         while (true) {
             displayMenu();
             int choice = getIntInput("Enter a command: ");
-
 
             switch (choice) {
                 case 1:
@@ -48,6 +49,9 @@ public class UI {
                 case 8:
                     AllVehiclesRequest();
                     break;
+                case 9:
+                    createContractRequest();
+                    break;
                 case 0:
                     System.out.println("Goodbye!");
                     return;
@@ -69,6 +73,7 @@ public class UI {
             6 - Find vehicles by mileage range
             7 - Find vehicles by type
             8 - List ALL vehicles
+            9 - Create Contract (Sale or Lease)
             0 - Quit
             -------------------------------
         """);
@@ -94,6 +99,7 @@ public class UI {
 
     private String getStringInput(String prompt) {
         System.out.print(prompt);
+        scanner.nextLine();
         return scanner.next();
     }
 
@@ -111,34 +117,18 @@ public class UI {
         double max = getDoubleInput("Enter maximum price: ");
         List<Vehicle> matches = dealership.getVehiclesByPrice(min, max);
         displayVehicles(matches);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void GetByMakeRequest() {
         String make = getStringInput("Enter vehicle make: ");
         List<Vehicle> matches = dealership.getVehiclesByMake(make);
         displayVehicles(matches);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 
     private void GetByModelRequest() {
         String model = getStringInput("Enter vehicle model: ");
         List<Vehicle> matches = dealership.getVehiclesByModel(model);
         displayVehicles(matches);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void GetByYearRequest() {
@@ -146,22 +136,12 @@ public class UI {
         int endYear = getYearInput("Enter end year: ");
         List<Vehicle> matches = dealership.getVehiclesByYear(startYear, endYear);
         displayVehicles(matches);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void GetByColorRequest() {
         String color = getStringInput("Enter vehicle color: ");
         List<Vehicle> matches = dealership.getVehiclesByColor(color);
         displayVehicles(matches);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void GetByMileageRequest() {
@@ -169,21 +149,18 @@ public class UI {
         int maxMileage = getIntInput("Enter maximum mileage: ");
         List<Vehicle> matches = dealership.getVehiclesByMileage(minMileage, maxMileage);
         displayVehicles(matches);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private void AllVehiclesRequest() {
         List<Vehicle> all = dealership.getAllVehicles();
         displayVehicles(all);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    }
+
+    private void GetByTypeRequest() {
+        System.out.print("Enter vehicle type (car, truck, SUV, van): ");
+        String type = scanner.next();
+        List<Vehicle> matches = dealership.getVehiclesByType(type);
+        displayVehicles(matches);
     }
 
     private void displayVehicles(List<Vehicle> vehicles) {
@@ -192,24 +169,54 @@ public class UI {
         } else {
             for (Vehicle v : vehicles) {
                 System.out.println(v);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
     }
-    private void GetByTypeRequest() {
-        System.out.print("Enter vehicle type (car, truck, SUV, van): ");
-        String type = scanner.next();
-        List<Vehicle> matches = dealership.getVehiclesByType(type);
-        displayVehicles(matches);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
+    private void createContractRequest() {
+        String date = getStringInput("Enter contract date (YYYY-MM-DD): ");
+        String customerName = getStringInput("Enter customer name: ");
+        String customerEmail = getStringInput("Enter customer email: ");
+
+        String vinStr = getStringInput("Enter VIN of vehicle to contract: ");
+        int vin;
+        try {
+            vin = Integer.parseInt(vinStr);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid VIN format.");
+            return;
+        }
+
+        List<Vehicle> vehicles = dealership.getVehiclesByVin(vin);
+        if (vehicles.isEmpty()) {
+            System.out.println("Vehicle with VIN " + vin + " not found.");
+            return;
+        }
+
+        Vehicle vehicleToSell = vehicles.get(0);
+
+        System.out.print("Enter contract type (sale/lease): ");
+        String contractType = scanner.next();
+
+        Contract contract = null;
+
+        if (contractType.trim().equalsIgnoreCase("sale")) {
+            System.out.print("Is the sale financed? (yes/no): ");
+            String financedInput = scanner.next();
+            boolean financed = financedInput.equalsIgnoreCase("yes");
+
+            contract = new SalesContract(date, customerName, customerEmail, vehicleToSell, financed);
+
+        } else if (contractType.equalsIgnoreCase("lease")) {
+            // Use the existing constructor - no extra parameters
+            contract = new LeaseContract(date, customerName, customerEmail, vehicleToSell);
+        } else {
+            System.out.println("Invalid contract type.");
+            return;
+        }
+
+        contractDataManager.saveContract(contract);
+        dealership.removeVehicle(vehicleToSell);
+        System.out.println("Contract saved and vehicle removed from inventory.");
+    }
 }

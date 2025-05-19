@@ -1,7 +1,7 @@
 package org.example;
 
 import java.io.*;
-import java.util.ArrayList;
+
 
 public class DealershipFileMgr {
     private static final String FILE_NAME = "inventory.csv";
