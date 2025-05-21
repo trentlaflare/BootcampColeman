@@ -5,19 +5,18 @@ import java.util.Scanner;
 
 public class UI {
     private DealerShip dealership;
+    private DealershipFileMgr fileMgr;
     private Scanner scanner;
     private ContractFileManager contractDataManager;
 
     public UI() {
         scanner = new Scanner(System.in);
         contractDataManager = new ContractFileManager();
-        inUI();
+        fileMgr = new DealershipFileMgr();
+        dealership = fileMgr.getDealership();
+        display();
     }
 
-    private void inUI() {
-        DealershipFileMgr fileManager = new DealershipFileMgr();
-        dealership = fileManager.getDealership();
-    }
 
     public void display() {
         while (true) {
@@ -82,20 +81,27 @@ public class UI {
 
                     Vehicle newVehicle = new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
                     dealership.addVehicle(newVehicle);
-                    System.out.println("Vehicle added to inventory.");
+
+                    fileMgr.saveInventory(dealership);
+
+                    System.out.println("Vehicle added to inventory and saved to file.");
                     break;
                 case 11:
-                    System.out.println("Enter vin: ");
-                    int v = scanner.nextInt();
+
+
+                    System.out.print("Enter VIN to remove: ");
+                    int vinToRemove = scanner.nextInt();
                     scanner.nextLine();
-                    boolean removed = dealership.removeVehicle(v);
-                    if (removed){
-                        System.out.println("Vehicle Removed from Inventory");
-                    }
-                    else {
-                        System.out.println("Vehicle with vin " + v + "not found.");
+
+                    boolean removed = dealership.removeVehicle(vinToRemove);
+                    if (removed) {
+                        fileMgr.saveInventory(dealership);
+                        System.out.println("Vehicle removed and CSV updated.");
+                    } else {
+                        System.out.println("Vehicle with VIN " + vinToRemove + " not found.");
                     }
                     break;
+
 
                 case 0:
                     System.out.println("Goodbye!");
