@@ -52,6 +52,51 @@ public class UI {
                 case 9:
                     createContractRequest();
                     break;
+                case 10:
+                    System.out.print("Enter VIN: ");
+                    int vin = scanner.nextInt();
+                    scanner.nextLine(); // consume leftover newline
+
+                    System.out.print("Enter year: ");
+                    int year = scanner.nextInt();
+                    scanner.nextLine();
+
+                    System.out.print("Enter make: ");
+                    String make = scanner.nextLine();
+
+                    System.out.print("Enter model: ");
+                    String model = scanner.nextLine();
+
+                    System.out.print("Enter vehicle type: ");
+                    String vehicleType = scanner.nextLine();
+
+                    System.out.print("Enter color: ");
+                    String color = scanner.nextLine();
+
+                    System.out.print("Enter odometer reading: ");
+                    int odometer = scanner.nextInt();
+
+                    System.out.print("Enter price: ");
+                    double price = scanner.nextDouble();
+                    scanner.nextLine();
+
+                    Vehicle newVehicle = new Vehicle(vin, year, make, model, vehicleType, color, odometer, price);
+                    dealership.addVehicle(newVehicle);
+                    System.out.println("Vehicle added to inventory.");
+                    break;
+                case 11:
+                    System.out.println("Enter vin: ");
+                    int v = scanner.nextInt();
+                    scanner.nextLine();
+                    boolean removed = dealership.removeVehicle(v);
+                    if (removed){
+                        System.out.println("Vehicle Removed from Inventory");
+                    }
+                    else {
+                        System.out.println("Vehicle with vin " + v + "not found.");
+                    }
+                    break;
+
                 case 0:
                     System.out.println("Goodbye!");
                     return;
@@ -74,6 +119,8 @@ public class UI {
             7 - Find vehicles by type
             8 - List ALL vehicles
             9 - Create Contract (Sale or Lease)
+            10 - Add A Vehicle
+            11 - Remove Vehicle
             0 - Quit
             -------------------------------
         """);
@@ -216,7 +263,12 @@ public class UI {
         }
 
         contractDataManager.saveContract(contract);
-        dealership.removeVehicle(vehicleToSell);
+        dealership.removeVehicleL(vehicleToSell);
         System.out.println("Contract saved and vehicle removed from inventory.");
+        System.out.println(contract.customerName);
+        System.out.println(contract.customerEmail);
+        System.out.println(contract.date);
+        System.out.println(contract.vehicle);
+
     }
 }

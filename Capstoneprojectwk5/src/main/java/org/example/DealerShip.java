@@ -117,7 +117,17 @@ public class DealerShip {
     }
 
 
-    public boolean removeVehicle(Vehicle vehicle) {
+    public boolean removeVehicleL(Vehicle vehicle) {
         return inventory.remove(vehicle);
     }
+    public boolean removeVehicle(int vin) {
+        for (Vehicle vehicle : inventory) {
+            if (vehicle.getVin() == vin) {
+                inventory.remove(vehicle);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
