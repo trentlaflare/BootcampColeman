@@ -26,7 +26,7 @@ public class FileManager {
             // Write w string format (same idea as printf)
             for (Sandwich sandwich : order.getSandwiches()) {
                 writer.write(String.format(
-                        "Sandwich,%s %s sandwich,%.2f% \n",
+                        "Sandwich,%s %s sandwich,%.2f\n",
                         sandwich.getSize(),
                         sandwich.getBreadType(),
                         sandwich.calculatePrice()

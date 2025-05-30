@@ -7,19 +7,19 @@ public class UI {
     private Scanner scanner;
     private Order currentOrder;
     private SandwichBuilder sandwichBuilder;
-    private boolean running;
+    private boolean go;
 
     public UI() {
         this.scanner = new Scanner(System.in);
         this.currentOrder = new Order();
         this.sandwichBuilder = new SandwichBuilder();
-        this.running = true;
+        this.go = true;
     }
 
     public void start() {
         System.out.println("=== Sandwich Order System ===");
 
-        while (running) {
+        while (go) {
             displayMainMenu();
             int choice = getIntInput(1, 5); //ranges from 1-5, outside of that would reject
 
@@ -225,7 +225,6 @@ public class UI {
         System.out.println("\n=== ORDER SUMMARY ===");
         System.out.println(currentOrder.generateReceipt());
 
-        // Ask for confirmation
         System.out.print("\nConfirm and save this order? (y/n): ");
         String input = scanner.nextLine().toLowerCase();
 
