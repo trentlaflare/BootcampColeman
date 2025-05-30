@@ -146,7 +146,12 @@ public class UI {
 
             PremiumTopping selected = toppings.get(choice - 1);
             sandwichBuilder.addTopping(new PremiumTopping(selected.getName(), extra, type));
-            System.out.println(selected.getName() + (extra ? " (extra)" : "") + " added!");
+            String message = selected.getName();
+            if (extra) {
+                message += " (extra)";
+            }
+            message += " added!";
+            System.out.println(message);
         }
     }
 
@@ -167,7 +172,11 @@ public class UI {
 
             RegularTopping selected = toppings.get(choice - 1);
             sandwichBuilder.addTopping(new RegularTopping(selected.getName(), extra));
-            System.out.println(selected.getName() + (extra ? " (extra)" : "") + " added!");
+            String name = selected.getName();
+            if (extra) {
+                name += " (extra)";
+            }
+            System.out.println(name + " added!");
         }
     }
 
@@ -175,8 +184,12 @@ public class UI {
         System.out.println("\n=== Add Drink ===");
         System.out.println("Drink Sizes:");
         for (int i = 0; i < DrinkSize.values().length; i++) {
-            System.out.println((i + 1) + ". " + DrinkSize.values()[i] + " - $" +
-                    String.format("%.2f", new Drink(DrinkSize.values()[i]).calculatePrice()));
+            DrinkSize size = DrinkSize.values()[i];
+            Drink drink = new Drink(size);
+            double price = drink.calculatePrice();
+            String formattedPrice = String.format("%.2f", price);
+
+            System.out.println((i + 1) + ". " + size + " - $" + formattedPrice);
         }
         System.out.print("Select size (0 to cancel): ");
         int choice = getIntInput(0, DrinkSize.values().length);
