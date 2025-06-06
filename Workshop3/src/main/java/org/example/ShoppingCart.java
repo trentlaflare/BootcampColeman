@@ -42,7 +42,7 @@ public class ShoppingCart {
         return products;
     }
 
-    public void printCartContents() {
+    public void viewCart() {
         if (products.isEmpty()) {
             System.out.println("Your cart is empty.");
         } else {
@@ -73,5 +73,22 @@ public class ShoppingCart {
         if (!found) {
             System.out.println("No items in your cart matched: " + barely);
         }
+    }
+    public void printReceipt(double cashPaid) {
+        System.out.println(" ");
+        System.out.println("=== Receipt ===");
+        for (Product product : products) {
+            System.out.println(product.getProductName() + " | " + product.getDepartment() + " | $" + product.getPrice() + " | SKU: " + product.getsKU());
+        }
+
+        double total = getCartTotal();
+        double change = cashPaid - total;
+
+        System.out.printf("Total: $%.2f%n", total);
+        System.out.printf("Cash Paid: $%.2f%n", cashPaid);
+        System.out.printf("Change: $%.2f%n", change);
+        System.out.println("Thank you for your purchase!");
+        //clear cart???
+        products.clear();
     }
 }

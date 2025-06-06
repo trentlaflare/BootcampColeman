@@ -19,9 +19,17 @@ public class Main {
             System.out.println("5) View Cart Total");
             System.out.println("6) Search Products");
             System.out.println("7) Search Cart");
-            System.out.println("8) Exit");
+            System.out.println("8) Checkout");
+            System.out.println("9) Exit");
 
-            int userChoice = Integer.parseInt(scanner.nextLine());
+            int userChoice;
+
+            try {
+                userChoice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number from the menu.");
+                continue;
+            }
 
             switch (userChoice) {
                 case 1:
@@ -32,11 +40,9 @@ public class Main {
                         System.out.println("   Department: " + product.getDepartment() + " | SKU: " + product.getsKU());
                     }
                     break;
-
                 case 2:
-                    cart.printCartContents();
+                    cart.viewCart();
                     break;
-
                 case 3:
                     System.out.println("Enter the SKU of the product you want to add to the cart:");
                     String addSku = scanner.nextLine();
@@ -51,30 +57,24 @@ public class Main {
                             break;
                         }
                     }
-
                     if (!foundProduct) {
                         System.out.println("Product with SKU " + addSku + " not found.");
                     }
                     break;
-
                 case 4:
                     System.out.println("Enter the SKU of the product you want to remove from the cart:");
                     String removeSku = scanner.nextLine();
                     cart.removeProduct(removeSku);
                     break;
-
                 case 5:
                     System.out.printf("Your cart total is: $%.2f%n", cart.getCartTotal());
                     break;
-
                 case 6:
                     System.out.println("Enter product name, department, or price to search:");
                     String searchItems = scanner.nextLine();
                     List<Product> searchProducts = FileLoader.readFile();
                     boolean searchMatch = false;
-
                     for (Product product : searchProducts) {
-                        //or not and here
                         if (
                                 product.getProductName().toLowerCase().contains(searchItems.toLowerCase()) ||
                                         product.getDepartment().toLowerCase().contains(searchItems.toLowerCase()) ||
@@ -85,19 +85,38 @@ public class Main {
                             searchMatch = true;
                         }
                     }
-
                     if (!searchMatch) {
                         System.out.println("No products matched your search.");
                     }
                     break;
-
                 case 7:
                     System.out.println("Enter a name, department, or price to search within your cart:");
                     String cartQuery = scanner.nextLine();
                     cart.searchCart(cartQuery);
                     break;
-
                 case 8:
+                    if (cart.getProducts().isEmpty()) {
+                        System.out.println("Your cart is empty. Add something before checking out.");
+                    }
+                    else {
+                        double total = cart.getCartTotal();
+                        System.out.printf("Your total is $%.2f. Please enter cash amount: ", total);
+
+                        try {
+                            double cashPaid = Double.parseDouble(scanner.nextLine());
+                            if (cashPaid >= total) {
+                                cart.printReceipt(cashPaid);
+                            }
+                            else {
+                                System.out.printf("Insufficient payment. You need $%.2f more.%n", total - cashPaid);
+                            }
+                        }
+                        catch (NumberFormatException e) {
+                            System.out.println("Invalid cash amount. Please enter a valid number.");
+                        }
+                    }
+                    break;
+                case 9:
                     System.out.println("Thanks for shopping with us!");
                     return;
 

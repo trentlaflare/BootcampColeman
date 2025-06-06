@@ -20,7 +20,7 @@ public class FinancialCalc2 {
         double a = 1 - Math.pow((1 + monthlyInterest), (-monthlyPayment));
         double b = a / monthlyInterest;
         double pV = pmt * b;
-        System.out.printf("Your present value is $%f", pV);
+        System.out.printf("Your present value is $%.2f", pV);
 
     }
 }

@@ -198,12 +198,11 @@ public class Main {
             System.out.println("3) Year-To-Date");
             System.out.println("4) Previous Year");
             System.out.println("5) Search by Vendor");
-            System.out.println("6) View Total");
             System.out.println("0) Back");
             System.out.print("Choose a report: ");
 
             String choice = scanner.nextLine().trim();
-            LocalDate today = LocalDate.now(); // only call once at top
+            LocalDate today = LocalDate.now();
             switch (choice) {
                 case "1":
                     List<Transaction> mtd = new ArrayList<>();
@@ -242,6 +241,7 @@ public class Main {
                         if (t.getDate().getYear() == prevYear) {
                             // manually add to the list
                             lastYear.add(t);
+
                         }
                     }
                     displayTransactions(lastYear);
@@ -291,7 +291,8 @@ public class Main {
     private static double viewTotal(List<Transaction> transactions) {
         if (transactions.isEmpty()) {
             System.out.println("No Total to view");
-            return 0.0; // <-- return a total of 0 if empty
+            // return a total of 0 if empty
+            return 0.0;
         } else {
             double total = 0.0;
             for (Transaction i : transactions) {
